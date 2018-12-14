@@ -1,0 +1,113 @@
+Comparing files Billmate.php and C:\TRUSTBOX\!BILLMATE\MODULES\GATEWAYS\CALLBACK\LIVE\BILLMATE.PHP
+***** Billmate.php
+ * @version 2.1.6
+ * @link https://billmate.se
+ *
+***** C:\TRUSTBOX\!BILLMATE\MODULES\GATEWAYS\CALLBACK\LIVE\BILLMATE.PHP
+ * @version 2.1.6
+ * @link http://www.billmate.se
+ *
+*****
+
+***** Billmate.php
+ * 2.1.8 20151103 Yuksel Findik: CURLOPT_CONNECTTIMEOUT is added
+ * 2.1.9 20151103 Yuksel Findik: CURLOPT_CAINFO is added, Check for Zero length data.
+ */
+class Billmate{
+        var $ID = "";
+***** C:\TRUSTBOX\!BILLMATE\MODULES\GATEWAYS\CALLBACK\LIVE\BILLMATE.PHP
+ * 2.1.8 20151103 Yuksel Findik: CURLOPT_CONNECTTIMEOUT is added
+ 
+ */
+class BillMate{
+        var $ID = "";
+*****
+
+***** Billmate.php
+        var $REFERER = false;
+        function __construct($id,$key,$ssl=true,$test=false,$debug=false,$referer=array()){
+                $this->ID = $id;
+***** C:\TRUSTBOX\!BILLMATE\MODULES\GATEWAYS\CALLBACK\LIVE\BILLMATE.PHP
+        var $REFERER = false;
+        function BillMate($id,$key,$ssl=true,$test=false,$debug=false,$referer=array()){
+                $this->ID = $id;
+*****
+
+***** Billmate.php
+                $this->KEY = $key;
+        defined('BILLMATE_CLIENT') || define('BILLMATE_CLIENT',  "Billmate:2.1.9" );
+        defined('BILLMATE_SERVER') || define('BILLMATE_SERVER',  "2.1.7" );
+        defined('BILLMATE_LANGUAGE') || define('BILLMATE_LANGUAGE',  "" );
+***** C:\TRUSTBOX\!BILLMATE\MODULES\GATEWAYS\CALLBACK\LIVE\BILLMATE.PHP
+                $this->KEY = $key;
+        defined('BILLMATE_CLIENT') || define('BILLMATE_CLIENT',  "BillMate:2.1.7" );
+        defined('BILLMATE_SERVER') || define('BILLMATE_SERVER',  "2.0.6" );
+        defined('BILLMATE_LANGUAGE') || define('BILLMATE_LANGUAGE',  "" );
+*****
+
+***** Billmate.php
+        function call($function,$params) {
+        $params = $this->trim_array($params);
+                $values = array(
+***** C:\TRUSTBOX\!BILLMATE\MODULES\GATEWAYS\CALLBACK\LIVE\BILLMATE.PHP
+        function call($function,$params) {
+                $values = array(
+*****
+
+***** Billmate.php
+        }
+    function trim_array($params = array()) {
+        $params = (is_string($params)) ? trim($params) : $params;
+        if(is_array($params)) {
+            foreach($params AS $key => $val) {
+                $params[$key] = $this->trim_array($val);
+            }
+        }
+        return $params;
+    }
+        function verify_hash($response) {
+***** C:\TRUSTBOX\!BILLMATE\MODULES\GATEWAYS\CALLBACK\LIVE\BILLMATE.PHP
+        }
+        function verify_hash($response) {
+*****
+
+***** Billmate.php
+                curl_setopt($ch, CURLOPT_CONNECTTIMEOUT,10);
+
+                // Start Mod Jesper.  Added cacert.pem to make sure server has the latest ssl certs.
+                $path = __DIR__.'/cacert.pem';
+                curl_setopt($ch,CURLOPT_CAINFO,$path);
+                // End mod Jesper
+                $vh = $this->SSL?((function_exists("phpversion") && function_exists("version_compare") && version_compare(phpve
+***** C:\TRUSTBOX\!BILLMATE\MODULES\GATEWAYS\CALLBACK\LIVE\BILLMATE.PHP
+                curl_setopt($ch, CURLOPT_CONNECTTIMEOUT,10);
+                $vh = $this->SSL?((function_exists("phpversion") && function_exists("version_compare") && version_compare(phpve
+*****
+
+***** Billmate.php
+                $data = curl_exec($ch);
+                if (curl_errno($ch)){
+***** C:\TRUSTBOX\!BILLMATE\MODULES\GATEWAYS\CALLBACK\LIVE\BILLMATE.PHP
+                $data = curl_exec($ch);
+
+//echo 'error: '. curl_errno($ch).' '.curl_error($ch) . ' data:'.$data.'!';
+
+                if (curl_errno($ch)){
+*****
+
+***** Billmate.php
+                $curlerror = curl_error($ch);
+                return json_encode(array("code"=>9510,"message"=>htmlentities($curlerror)));
+                } else
+                        curl_close($ch);
+                if(strlen($data) == 0){
+                        return json_encode(array("code" => 9510,"message" => htmlentities("Communication Error")));
+                }
+            return $data;
+***** C:\TRUSTBOX\!BILLMATE\MODULES\GATEWAYS\CALLBACK\LIVE\BILLMATE.PHP
+                $curlerror = curl_error($ch);
+                return json_encode(array("error"=>9510,"message"=>htmlentities($curlerror)));
+                }else curl_close($ch);
+            return $data;
+*****
+

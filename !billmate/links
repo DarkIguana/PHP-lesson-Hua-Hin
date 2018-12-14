@@ -1,0 +1,6 @@
+http://developer.billmate.se/api-integration
+http://developer.billmate.se/api-integration/addpayment/
+http://developer.billmate.se/api-integration/initCheckout/
+http://developer.billmate.se/api-integration/activatepayment/
+http://developer.billmate.se/api-integration/updatepayment/
+http://developer.billmate.se/api-integration/getpaymentinfo/

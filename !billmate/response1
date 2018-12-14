@@ -1,0 +1,22 @@
+https://my-data.se/client/admin/gatewaylog.php
+
+
+[1] Call back result for invoice:
+
+credentials => {"hash":"267ba670ddfe22077fa76efafe8812cadb59f35b3774f258f0f7dc6ff2ddce9549391c2e0fa144cc667b386851b844fbdc3c766ad8427c0e033a653d6b274866"}
+data => {"number":"562975","status":"Created","orderid":"MyDataSe328","url":"https://api.billmate.se/invoice/18039/201812116bdb6e4f8fceb58402ad0f2a797abfc2"}
+ResponseType => Accept
+
+
+[2] Call back result: invoice: Accept
+
+credentials => {"hash":"267ba670ddfe22077fa76efafe8812cadb59f35b3774f258f0f7dc6ff2ddce9549391c2e0fa144cc667b386851b844fbdc3c766ad8427c0e033a653d6b274866"}
+data => {"number":"562975","status":"Created","orderid":"MyDataSe328","url":"https://api.billmate.se/invoice/18039/201812116bdb6e4f8fceb58402ad0f2a797abfc2"}
+ResponseType => Accept
+
+
+Invoice ID Not Found
+
+credentials => {"hash":"267ba670ddfe22077fa76efafe8812cadb59f35b3774f258f0f7dc6ff2ddce9549391c2e0fa144cc667b386851b844fbdc3c766ad8427c0e033a653d6b274866"}
+data => {"number":"562975","status":"Created","orderid":"MyDataSe328","url":"https://api.billmate.se/invoice/18039/201812116bdb6e4f8fceb58402ad0f2a797abfc2"}
+ResponseType => Accept

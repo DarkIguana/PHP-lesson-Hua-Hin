@@ -1,0 +1,39 @@
+All new info J 
+
+This should work a lot better, but is something totally different than before J 
+So yes, they are not too smart. 
+
+This is what we have to do Stas: 
+
+The flow should be as follow, your system should initiate by making a Billmate Checkout sesson by sending an "initCheckout" API request. It's similiar to your current request setup u have done now with "addPayment" request, the
+difference is that other values are sent. No data from customer is needed to send with the request, on the second step of the process the user is on the Billmate Checkout page. Therefore he/she can fill up the ones address etc directly on the checkout page.
+
+In the respond from the request to the API, a URL is send back to be able to use in an iframe in your Systems checkout-page. This to be able to show the Billmate Checkout inside your current system.
+Once the Billmate Checkout is showing in iframe, then your system and Billmate Checkout can communicate with JS event, and through the API request "updateChekcout".
+When the system sends an "updateCheckout" request regarding the order changes/editings in the system, and after a respond from the API, send an "updateCheckout" JS event so that the Billmate Checkout refresh with the new infromation.
+
+Once the customer finalize the payment processes, he/she will redirected to the pre-set accept-URL and send a callback från Billmate API to the callback URL, to confirm that your system knows it's finalize successful. 
+It can happen that your system gets a callback URL before the accept-URL, this is mostly if the customer has a slow internet connection and then the order can't be saved in th session but also needs to be saved in tha database.
+(Sessios are not available for callback)
+
+Once your system receive confirmation that payment went thourgh, you can request a "getPaymentinfo" to the API to verify the order is correct accordently to your invoice.
+http://developer.billmate.se/api-integration/getpaymentinfo/
+This step isn't manditory, but it's good for your verification of the invoice is payed accordently.
+
+For more information and code snippets, check the zip-file.
+
+https://www.dropbox.com/s/92sbis29e8qigjx/billmate-checkout-exempels.zip?dl=0
+
+
+A payment goes through two steps, the first one is to let your system initiate with the Billmate Checkout by calling the "initCheckout" call and customer finalize the payment process.
+1. Orders are created in the online.billmate,se with an invoice number.
+2a. Customer is redirected to the accept-URL pre-set in the "initCheckout" request and the data that follows the redirection is include the invoice number.'
+2b. Billmate API send a request to the callback URL which is set in the "initCheckout" where the data that follows is include the invoice number.
+
+Information how the invoice payment works
+It's the invoice number that your system receive, which you use later to activate the order.
+When the order is first created, the is no money moved yet. An invoice hasn't send yet and if the customer selects creditcard payment then the amount is reserved on the customer account.
+
+The are two ways to activate an order, you can go directly in to the online.billmate.se and activate manually all orders.
+The better way is to send an API request "activatePaymeny" with the invoice number that your system recieved once getting the accept-URL/callback URL.
+Only once the order is activated, Billmate will send the invoice to the end customer.
