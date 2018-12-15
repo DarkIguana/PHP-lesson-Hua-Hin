@@ -17,6 +17,10 @@ $result2 = "invoice: " . $invoiceId . ' ' . $_REQUEST['ResponseType'] . ' ' . $_
 
 logTransaction($gatewayParams['name'], $_REQUEST, "[2] Call back result: " . $result2);
 
+if ($_REQUEST['status']="Created" && $_REQUEST['ResponseType']="Accept"){
+sendBillMateActivatePayment($invoiceId);
+}
+exit;
 
 
 

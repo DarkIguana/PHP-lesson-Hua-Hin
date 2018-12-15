@@ -39,14 +39,6 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 
-
-
-
-
-
-
-
-
 /** A Billmate class file is required that can be downloaded here: 
  * http://developer.billmate.se/Billmate.zip
  *
@@ -84,12 +76,6 @@ $plans = $bm->getPaymentplans($values);
 
 //print_r($plans);
 */
-
-
-
-
-
-
 
 /* Payment Data */
 /**
@@ -250,6 +236,108 @@ if (!isset($result['code']) AND isset($result['number']))
    
 }
 
+function sendBillMateActivatePayment($vars)
+{
+   global $gatewayModuleName, $gatewayPath, $gatewayCompany;
+
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+/** A Billmate class file is required that can be downloaded here: 
+ * http://developer.billmate.se/Billmate.zip
+ *
+ * Note: hash, serverdata and time is automatically computed and added in class file 
+ */
+
+/* Server settings */
+
+$test = true;
+$ssl = true;
+$debug = true;
+
+/* Credentials for Auth */
+
+$id = $vars["merchantid"];
+$key = $vars["merchantkey"];
+define("BILLMATE_SERVER", "2.1.6");	/* API version */
+define("BILLMATE_CLIENT", "Pluginname:BillMateTrustbox:1.0");
+define("BILLMATE_LANGUAGE", "sv");
+
+$bm = new BillMate($id, $key, $ssl, $test, $debug);
+$values = array();
+
+/*
+$values["PaymentData"] = array(
+	"currency" => "SEK",
+	"language" => "sv",
+	"country" => "se",
+	"totalwithtax" => "50000"
+);
+
+$plans = $bm->getPaymentplans($values);
+
+//print_r($plans);
+*/
 
 
+/* Payment Data */
+/**
+ * @param array Payment Data : Buyer details.
+ */
+
+
+$values['CheckoutData']['terms'] = 'http://'.$_SERVER['SERVER_NAME'].'/storeterms';
+$values['CheckoutData']['privacyPolicy'] = 'http://'.$_SERVER['SERVER_NAME'].'/privacepolicy';
+$values['CheckoutData']['redirectOnSuccess'] = 'true';
+
+
+$values["PaymentData"] = array(
+//	"method" => "4",//Invoice Part Payment     //"1",// Invoice Factoring      "4",//Invoice Part Payment      //8=cart
+//        "paymentplanid" => "3", //1
+	"currency" => "SEK",
+	"language" => "sv",
+        "country" => "SE",
+//	"autoactivate" => "1",
+	"orderid" => $gatewayCompany.$vars['invoiceid'],
+//	"logo" => "Logo.jpg",
+        "cancelurl" => 'https://'.$_SERVER['SERVER_NAME'].'/client/modules/gateways/callback/billmatetrustboxfp3.php?ResponseType=Cancel',
+        "accepturl" => 'https://'.$_SERVER['SERVER_NAME'].'/client/modules/gateways/callback/billmatetrustboxfp3.php?ResponseType=Accept',
+        "callbackurl" => 'https://'.$_SERVER['SERVER_NAME'].'/client/modules/gateways/callback/billmatetrustboxfp3.php?ResponseType=Callback',
+        "returnmethod" => 'GET',
+);
+
+
+
+
+/**
+ * @param array articles : article details.
+ */
+
+$values["Articles"][0] = array(
+        "artnr" => "TR",
+        "title" => $gatewayCompany,
+        "quantity" => "1",
+        "aprice" => $vars['total'],
+        "taxrate" =>  $vars['taxrate'],
+        "discount" => "0",
+        "withouttax" =>  $vars['totalnotax'],
+);
+
+/**
+ * @param array Cart Data : Cart details.
+ */
+
+$values["Cart"] = array(
+	"Total" => array(
+			"withouttax" => $vars['totalnotax'],
+			"tax" => ( intval($vars['total']) - intval($vars['totalnotax']) ),
+			"withtax" => $vars['total'],
+			"rounding" => 0,
+		)
+);
+
+    $values3["PaymentData"] = array( "number" => $result['number'] );
+    $result3 = $bm->activatePayment($values3);
+
+}
 ?>
