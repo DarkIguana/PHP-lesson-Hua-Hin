@@ -266,20 +266,6 @@ define("BILLMATE_LANGUAGE", "sv");
 $bm = new BillMate($id, $key, $ssl, $test, $debug);
 $values = array();
 
-/*
-$values["PaymentData"] = array(
-	"currency" => "SEK",
-	"language" => "sv",
-	"country" => "se",
-	"totalwithtax" => "50000"
-);
-
-$plans = $bm->getPaymentplans($values);
-
-//print_r($plans);
-*/
-
-
 /* Payment Data */
 /**
  * @param array Payment Data : Buyer details.

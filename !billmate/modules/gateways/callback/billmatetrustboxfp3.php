@@ -19,9 +19,14 @@ logTransaction($gatewayParams['name'], $_REQUEST, "[2] Call back result: " . $re
 
 if ($_REQUEST['status']="Created" && $_REQUEST['ResponseType']="Accept"){
 sendBillMateActivatePayment($invoiceId);
-}
-exit;
 
+$approvalcodeOK    = ($_POST['status'] == 'Paid');
+$transactionStatus = $approvalcodeOK ? 'Success' : 'Failure';
+$rezervResult = $approvalcodeOK ? 'payed' : 'badpayed';
+$result       = 'Result: ' . $result2;
+mysql_query('update tblinvoices set notes="' . $rezervResult . '  ' . $result . '" where id=' . $invoiceId);
+exit;
+}
 
 
 
