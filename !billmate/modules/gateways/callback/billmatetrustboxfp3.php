@@ -24,7 +24,7 @@ $approvalcodeOK    = ($_POST['status'] == 'Paid');
 $transactionStatus = $approvalcodeOK ? 'Success' : 'Failure';
 $rezervResult = $approvalcodeOK ? 'payed' : 'badpayed';
 $result       = 'Result: ' . $result2;
-mysql_query('update tblinvoices set notes="' . $rezervResult . '  ' . $result . '" where id=' . $invoiceId);
+mysql_query('update tblinvoices set notes="BillMate Invoce Created' . $rezervResult . '  ' . $result . '" where id=' . $invoiceId);
 exit;
 }
 
