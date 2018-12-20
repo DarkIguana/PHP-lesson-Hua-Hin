@@ -9,8 +9,8 @@ require_once 'billmatetrustboxi.php';
 
 $result = sendBillMate2($_POST);
 
-echo '!!!';
-print_r($result);
-echo '!!!';
+//echo '!!!';
+//print_r($result);
+//echo '!!!';
 
 ?>

@@ -6,32 +6,145 @@ require_once 'billmatetrustboxi.php';
 
 $id = $pid = $transactionId = null;
 
-$invoiceId0 = $invoiceId = $invoiceid = $_POST['orderid'];
+/*
+	function verify_hash($response) {
+		$response_array = is_array($response)?$response:json_decode($response,true);
+		//If it is not decodable, the actual response will be returnt.
+		if(!$response_array && !is_array($response))
+			return $response;
+		if(is_array($response)) {
+			$response_array['credentials'] = json_decode($response['credentials'], true);
+			$response_array['data'] = json_decode($response['data'],true);
+		}
+		//If it is a valid response without any errors, it will be verified with the hash.
+		if(isset($response_array["credentials"])){
+			//$hash = $this->hash(json_encode($response_array["data"]));
+			//If hash matches, the data will be returnt as array.
+			//if($response_array["credentials"]["hash"]==$hash)
+				return $response_array["data"];
+			//else return array("code"=>9511,"message"=>"Verification error","hash"=>$hash,"hash_received"=>$response_array["credentials"]["hash"]);
+		}
+		return array_map("utf8_decode",$response_array);
+	}
+*/
+
+//echo ' GET: ';
+//print_r($_GET);
+//echo ' end. ';
+
+
+//echo ' POST: ';
+//print_r($_POST);
+//echo ' end. ';
+
+
+$data = $_GET['data'];
+
+//echo ' GET[data]: ';
+//print_r($data);
+//echo ' end. ';
+
+/*
+
+function strToHex($string)
+{
+    $hex = '';
+
+    for ($i = 0; $i < strlen($string); $i++)
+    {
+        $ord = ord($string[$i]);
+        $hexCode = dechex($ord);
+        $hex .= substr('0'.$hexCode, -2);
+    }
+
+    return strToUpper($hex);
+}
+
+
+$dataHex = strToHex($data);
+
+echo ' GET[data] hex: ';
+print_r($dataHex);
+echo ' end. ';
+
+
+
+$dataHex2 = bin2hex($data);
+
+echo ' GET[data] hex2: ';
+print_r($dataHex2);
+echo ' end. ';
+
+*/
+
+$data = str_replace('&quot;', '"', $data);
+
+
+$data = json_decode($data,true);
+
+
+//echo ' GET[data]2: ';
+//print_r($data);
+//echo ' end. ';
+
+/*
+
+
+
+$data = '{"number":"512104","status":"Created","orderid":"MyDataSe619","url":"https://api.billmate.se/invoice/18039/20181218b4b468df71203c616bf1d6a30ab0a533"}';
+
+echo ' GET[data]3: ';
+print_r($data);
+echo ' end. ';
+
+$data = json_decode($data,true);
+
+echo ' GET[data]4: ';
+print_r($data);
+echo ' end. ';
+
+*/
+
+
+
+//$data = verify_hash($_GET);
+
+$invoiceId0 = $invoiceId = $data['orderid'];
+
+if( startsWith2bm($invoiceId, $gatewayCompany) )
+{
+    $invoiceId = substr($invoiceId, strlen($gatewayCompany) );
+}
 
 
 logTransaction($gatewayParams['name'], $_REQUEST, "[1] Call back result for invoice: " . $invoiceId);
 
 
+$newStatus = $data['status'];
 
-$result2 = "invoice: " . $invoiceId . ' ' . $_REQUEST['ResponseType'] . ' ' . $_REQUEST['status'] . ' ' . $_REQUEST['number'] . ' ' . $_REQUEST['code'] . ' ' . $_REQUEST['message'] . ' ' . $_REQUEST['url'];
+$result2 = "invoice: " . $invoiceId . ' ResponseType: ' . $_REQUEST['ResponseType'] . ' status: ' . $data['status'] . ' billmateInvoiceNumber: ' . $data['number'] . ' code: ' . $data['code'] . ' message: ' . $data['message'] . ' url: ' . $data['url'];
 
 logTransaction($gatewayParams['name'], $_REQUEST, "[2] Call back result: " . $result2);
 
-if ($_REQUEST['status']="Created" && $_REQUEST['ResponseType']="Accept"){
-sendBillMateActivatePayment($invoiceId);
+if ($data['status'] == "Created" && $_REQUEST['ResponseType'] == "Accept")
+{
+    $billMateInvoiceId = $data["number"];
 
-$approvalcodeOK    = ($_POST['status'] == 'Paid');
-$transactionStatus = $approvalcodeOK ? 'Success' : 'Failure';
-$rezervResult = $approvalcodeOK ? 'payed' : 'badpayed';
-$result       = 'Result: ' . $result2;
-mysql_query('update tblinvoices set notes="BillMate Invoce Created' . $rezervResult . '  ' . $result . '" where id=' . $invoiceId);
-exit;
+    mysql_query('update tblinvoices set notes="BillMate Invoice Created ' . $result2 . '" where id=' . $invoiceId);
+
+    $newStatus = sendBillMateActivatePayment($billMateInvoiceId);
+
+    $result2 = "invoice: " . $invoiceId . ' ResponseType: ' . $_REQUEST['ResponseType'] . ' status: ' . $newStatus . ' billmateInvoiceNumber: ' . $data['number'] . ' code: ' . $data['code'] . ' message: ' . $data['message'] . ' url: ' . $data['url'];
+    mysql_query('update tblinvoices set notes="BillMate Invoice Created ' . $result2 . '" where id=' . $invoiceId);
+
+    if($newStatus != 'Partpayment')
+       exit;
 }
 
 
 
 
-$approvalcodeOK    = ($_POST['status'] == 'Paid');
+$approvalcodeOK    = ($newStatus == 'Partpayment');
 $transactionStatus = $approvalcodeOK ? 'Success' : 'Failure';
 $rezervResult = $approvalcodeOK ? 'payed' : 'badpayed';
 $result       = 'Result: ' . $result2;
@@ -115,7 +228,7 @@ and a.clientid=c.id";
 } 
 else 
 {
-    echo '!!!Error!!! ' . $_REQUEST['ResponseType'] . ' ' . $_REQUEST['code'] . ' ' . $_REQUEST['message'];
+    echo '!!!Error!!! ' . $result2;
 }
 
 

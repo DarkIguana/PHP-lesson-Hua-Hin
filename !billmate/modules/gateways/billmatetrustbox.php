@@ -13,14 +13,16 @@ function billmatetrustbox_config() {
 }
 
 
-function billmatetrustbox_link($params) { 
- 
-    $gatewayusername = $params['username'];
-    $gatewayuserkey = $params['userkey'];
-    $gatewaytestmode = $params['testmode'];
-
+function billmatetrustbox_link($params) 
+{ 
     $testmodefield = '';
     $hid = 'TYPE="hidden"';
+
+    if(isset($params['testmode']) &&  $params['testmode']=='on')
+    {
+        $testmodefield = ' <INPUT TYPE="text" NAME="test" VALUE="1">';
+        $hid = 'TYPE="text"';
+    }
 
     $myUrlFP = 'https://my-data.se/client/modules/gateways/callback/billmatetrustboxfp.php';
 
@@ -100,8 +102,6 @@ and pg.name='SlIP ID SHOP'";
                    <INPUT '.$hid.' NAME="taxrate" VALUE="'.sprintf("%.0f", $taxrate*100).'">'. $langfield .' 
                    <INPUT '.$hid.' NAME="total" VALUE="'.sprintf("%.0f", $total*100).'">'. $langfield .' 
                    <INPUT '.$hid.' NAME="currency" VALUE="' . $currency . '">
-                   <INPUT '.$hid.' NAME="merchantid" VALUE="'. $gatewayusername .'">
-                   <INPUT '.$hid.' NAME="merchantkey" VALUE="'. $gatewayuserkey .'">
                    <INPUT '.$hid.' NAME="invoiceid" VALUE="' . $invoiceId . '">
                    <INPUT '.$hid.' NAME="firstname" VALUE="' . $params['clientdetails']['firstname'] . '">
                    <INPUT '.$hid.' NAME="lastname" VALUE="' . $params['clientdetails']['lastname'] . '">
