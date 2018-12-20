@@ -64,7 +64,7 @@ $bm = new BillMate($id, $key, $ssl, $test, $debug);
 $values = array();
 
 
-*/
+
 
 /* Payment Data */
 /**
